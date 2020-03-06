@@ -19,7 +19,7 @@ Uses the Flickr API to execute geotagged photo searches. Results are auto format
     Accuracy
     Description
     Owner Name
-    Orignal Foramt
+    Orignal Format
     Date Upload
     Date Taken
     Time Taken
