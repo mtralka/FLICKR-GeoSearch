@@ -1,4 +1,4 @@
-# Flickr-API-Services
+# Flickr GeoSearch
 
 Uses the Flickr API to execute geotagged photo searches. Results are auto formatted into an excel file and can be uploaded to Flickr photo galleries for review. Also supports the download of photos from Flickr photo galleries.
 
@@ -8,6 +8,9 @@ Uses the Flickr API to execute geotagged photo searches. Results are auto format
     Radial: Lat, Long, Radius, Units
     Accuracy
     Tags
+    Minimum Date Taken
+    Maximum Date Taken
+    
 **Returning Variables**
 
     Photo ID
@@ -17,7 +20,6 @@ Uses the Flickr API to execute geotagged photo searches. Results are auto format
     Long
     Lat
     Accuracy
-    Description
     Owner Name
     Orignal Format
     Date Upload
