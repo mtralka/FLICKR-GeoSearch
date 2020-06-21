@@ -28,8 +28,8 @@ Uses the Flickr API to execute geotagged photo searches. Results are auto format
     Icon Server
     Last Update
     Tags
-    Owner Name
-    Owner Country
+    Owner Name (optional, slow)
+    Owner Country (optional, slow)
   
 **Return Options**
     
