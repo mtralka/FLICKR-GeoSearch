@@ -34,7 +34,7 @@ Uses the Flickr API to execute geotagged photo searches. Results are auto format
 **Return Options**
     
     XLXS File
-    Flickr Photo Album- delimited at 500 photos, not all photos are uploadable to a user's album, time intensive due to API restrictions
+    Flickr Photo Album- not all photos are uploadable to a user's album, time intensive due to API restrictions
   
 **Using**
 
