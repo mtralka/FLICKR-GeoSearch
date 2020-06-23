@@ -598,7 +598,7 @@ def the_GUI():
 
             ]
 
-            auth_window = sg.Window('Authentication', auth_layout)
+            auth_window = sg.Window('Authentication', auth_layout, no_titlebar=True, grab_anywhere=True)
 
             auth_window_active = True
 
@@ -607,7 +607,7 @@ def the_GUI():
 
             event2, values2 = auth_window.read()
 
-            if event2 == sg.WIN_CLOSED or event2 == 'Cancel' or event2 == 'Ok':
+            if event2 == 'Cancel' or event2 == 'Ok':
                 auth_window.close()
                 auth_window_active = False
 
@@ -657,10 +657,11 @@ def the_GUI():
                                  "Flickr photo galleries. "
                                  "", enter_submits=False, disabled=True, autoscroll=False, enable_events=False,
                     do_not_clear=True, size=(50, 30))],
+                [sg.Ok()],
 
             ]
 
-            about_window = sg.Window('About', about_layout)
+            about_window = sg.Window('About', about_layout, no_titlebar=True, grab_anywhere=True)
 
             about_window_active = True
 
@@ -669,7 +670,7 @@ def the_GUI():
 
             event3, values3 = about_window.read()
 
-            if event3 == sg.WIN_CLOSED:
+            if event3 == 'Ok':
                 about_window.close()
                 about_window_active = False
 
