@@ -1,6 +1,5 @@
-import math
 import threading
-import time
+from datetime import date
 import webbrowser
 import PySimpleGUI as sg
 import flickrapi
@@ -139,28 +138,21 @@ class flickrSearchParameters:
         return self.max_year
 
     def get_min_date_joined(self):
-        min_complete = '/'.join((str(self.min_month), self.min_date, self.min_year))
+        min_complete = '-'.join((str(self.min_year), str(self.min_month), self.min_date))
         return min_complete
 
     def get_max_date_joined(self):
-        max_complete = '/'.join((str(self.max_month), self.max_date, self.max_year))
-        return max_complete
-
-    def get_min_date_unix(self):
-        dt = datetime.datetime(int(self.min_year), int(self.min_month), int(self.min_date)).timestamp()
-        return str(math.trunc(dt))
-
-    def get_max_date_unix(self):
-        dt = datetime.datetime(int(self.max_year), int(self.max_month), int(self.max_date)).timestamp()
-        return str(math.trunc(dt))
-
-    def get_min_date_SQL(self):
-        min_complete = '-'.join((self.min_year, str(self.min_month), self.min_date))
-        return min_complete
-
-    def get_max_date_SQL(self):
         max_complete = '-'.join((self.max_year, str(self.max_month), self.max_date))
         return max_complete
+
+    # Optional: can search with UNIX datetime instead of SQL datetime
+    # def get_min_date_unix(self):
+    # dt = datetime.datetime(int(self.min_year), int(self.min_month), int(self.min_date)).timestamp()
+    # return str(math.trunc(dt))
+
+    # def get_max_date_unix(self):
+    # dt = datetime.datetime(int(self.max_year), int(self.max_month), int(self.max_date)).timestamp()
+    # return str(math.trunc(dt))
 
     def get_gallery_upload(self):
         return self.gallery_upload_boolean
@@ -184,7 +176,9 @@ def long_operation_thread(flickr, search):
     worksheet0 = workbook.add_worksheet()
     worksheet = workbook.add_worksheet()
 
-    worksheet0.write_string(0, 0, 'FLICKR GeoSearch')
+    bold = workbook.add_format({'bold': True})
+
+    worksheet0.write_string(0, 0, 'FLICKR GeoSearch', bold)
     worksheet0.write_string(1, 0, "Matthew Tralka")
 
     worksheet0.write(8, 0, "Accuracy")
@@ -207,11 +201,11 @@ def long_operation_thread(flickr, search):
         worksheet0.write(12, 1, search.get_radial_units())
 
     if search.get_min_date_boolean():
-        worksheet0.write_string(13, 0, 'Min Date Taken (MM/DD/YYYY)')
+        worksheet0.write_string(13, 0, 'Min Date Taken')
         worksheet0.write_string(13, 1, search.get_min_date_joined())
 
     if search.get_max_date_boolean():
-        worksheet0.write_string(14, 0, 'Max Date Taken (MM/DD/YYYY)')
+        worksheet0.write_string(14, 0, 'Max Date Taken')
         worksheet0.write_string(14, 1, search.get_max_date_joined())
 
     if search.get_search_tags():
@@ -229,22 +223,21 @@ def long_operation_thread(flickr, search):
         worksheet0.write(12, 0, "")
         worksheet0.write(12, 1, "")
 
+    # search can not handle null min_date values, program defaults to Flickr creation year
     if not search.get_min_date_boolean():
-
-        # Year of Flickr's creation, search can not handle null min_date values
-        dt = datetime.datetime(2004, 1, 1).timestamp()
-        min_date = str(math.trunc(dt))
+        min_date = "2004-01-01"
+        print(min_date)
 
     else:
-        min_date = search.get_min_date_unix
+        min_date = search.get_min_date_joined()
         print(min_date)
 
     if not search.get_max_date_boolean():
-
-        max_date = int(time.time())
+        max_date = date.today().strftime("%Y-%m-%d")
+        print(max_date)
 
     else:
-        max_date = search.get_max_date_unix
+        max_date = search.get_max_date_joined()
         print(max_date)
 
     photo_counter = 1
@@ -254,11 +247,66 @@ def long_operation_thread(flickr, search):
     gallery_valid = False
     id_list = [0000000]
 
+    """""""""
+    Excel Variables
+    """""""""
+
+    header_row = 0
+    photo_number_column = 0
+    photo_ID_column = 1
+    secret_column = 2
+    title_column = 3
+    WOE_ID_column = 4
+    longitude_column = 5
+    latitude_column = 6
+    accuracy_column = 7
+    owner_name_column = 8
+    original_format_column = 9
+    date_upload_column = 10
+    date_taken_column = 11
+    time_taken_column = 12
+    icon_server_column = 13
+    last_update_column = 14
+    link_column = 15
+    tags_column = 16
+    owner_real_name_column = 17
+    owner_hometown_column = 18
+    worksheet.set_column('A:T', 13)
+    worksheet.set_column('R:R', 17)
+
+    def write_string_header(row, column, string):
+        worksheet.write_string(row, column, string, bold)
+
+    if search.get_user_info():
+        tags_column = 18
+        owner_real_name_column = 16
+        owner_hometown_column = 17
+        write_string_header(header_row, owner_real_name_column, "Owner Real Name")
+        write_string_header(header_row, owner_hometown_column, "Owner Hometown")
+
+    write_string_header(header_row, photo_number_column, 'Photo Number')
+    write_string_header(header_row, photo_ID_column, "Photo ID")
+    write_string_header(header_row, secret_column, "Secret")
+    write_string_header(header_row, title_column, "Title")
+    write_string_header(header_row, WOE_ID_column, "WOE ID")
+    write_string_header(header_row, longitude_column, "Longitude")
+    write_string_header(header_row, latitude_column, "Latitude")
+    write_string_header(header_row, accuracy_column, "Accuracy")
+    write_string_header(header_row, owner_name_column, "Owner Name")
+    write_string_header(header_row, original_format_column, "Original Format")
+    write_string_header(header_row, date_upload_column, "Date Uploaded")
+    write_string_header(header_row, date_taken_column, "Date Taken")
+    write_string_header(header_row, time_taken_column, "Time Taken")
+    write_string_header(header_row, icon_server_column, "Icon Server")
+    write_string_header(header_row, last_update_column, "Last Update")
+    write_string_header(header_row, link_column, "Link")
+    write_string_header(header_row, tags_column, "Tags")
+
     # TODO Gallery Download
     """""""""""""""""""""
     search_results_on_page = flickr.galleries.getPhotos(gallery_id=values['-gallery_id-'], extras=extras_string,
                                                                 per_page=per_page_photo, page=page_x
-    
+
     '""""""""""""""""""'"""
 
     for photo in flickr.walk(bbox=search.get_BBOX_grid(), lat=search.get_radial_lat(),
@@ -267,128 +315,110 @@ def long_operation_thread(flickr, search):
                              radius_units=search.get_radial_units(),
                              tags=search.get_search_tags(),
                              accuracy=search.get_accuracy(), extras=search.extras,
-                             min_taken_date=search.get_min_date_SQL(), max_taken_date=search.get_max_date_SQL()):
+                             min_taken_date=min_date, max_taken_date=max_date):
 
         # Photo Number
-        worksheet.write_string(0, 0, "Photo Number")
-        worksheet.write(photo_starting_row, 0, photo_counter)
+        worksheet.write(photo_starting_row, photo_number_column, photo_counter)
 
         # Write Photo ID
-        worksheet.write_string(0, 1, "Photo ID")
-        worksheet.write_number(photo_starting_row, 1, int(photo.get('id')))
+        worksheet.write_number(photo_starting_row, photo_ID_column, int(photo.get('id')))
         print(photo.get('id'))
 
         if search.get_gallery_upload():
             id_list.append(int(photo.get('id')))
 
         # Write Secret
-        worksheet.write_string(0, 2, "Secret")
-        worksheet.write_string(photo_starting_row, 2, photo.get('secret'))
+        worksheet.write_string(photo_starting_row, secret_column, photo.get('secret'))
 
         # Write Title
-        worksheet.write_string(0, 3, "Title")
-        worksheet.write_string(photo_starting_row, 3, photo.get('title'))
+        worksheet.write_string(photo_starting_row, title_column, photo.get('title'))
 
         # Write WOE ID
-        worksheet.write_string(0, 4, "WOE ID")
         try:
-            worksheet.write_number(photo_starting_row, 4, int(photo.get('woeid')))
+            worksheet.write_number(photo_starting_row, WOE_ID_column, int(photo.get('woeid')))
         except:
             print("Null Object")
 
         # Write Longitude
-        worksheet.write_string(0, 5, "Longitude")
         try:
-            worksheet.write_number(photo_starting_row, 5, float(photo.get('longitude')))
+            worksheet.write_number(photo_starting_row, longitude_column, float(photo.get('longitude')))
         except:
             print("Null Object")
 
         # Write Latitude
-        worksheet.write_string(0, 6, "Latitude")
         try:
-            worksheet.write_number(photo_starting_row, 6, float(photo.get('latitude')))
+            worksheet.write_number(photo_starting_row, latitude_column, float(photo.get('latitude')))
         except:
             print("Null Object")
 
         # Write Accuracy
-        worksheet.write_string(0, 7, "Accuracy")
         try:
-            worksheet.write_string(photo_starting_row, 7, photo.get('accuracy'))
+            worksheet.write_string(photo_starting_row, accuracy_column, photo.get('accuracy'))
         except:
             print("Null Object")
 
         # Write Owner Name
-        worksheet.write_string(0, 8, "Owner Name")
         try:
-            worksheet.write_string(photo_starting_row, 8, photo.get('owner'))
+            worksheet.write_string(photo_starting_row, owner_name_column, photo.get('owner'))
         except:
             print("Null Object")
 
         # Write Original Format
-        worksheet.write_string(0, 9, "Original Format")
         try:
-            worksheet.write_string(photo_starting_row, 9, photo.get('originalformat'))
+            worksheet.write_string(photo_starting_row, original_format_column, photo.get('originalformat'))
         except:
             print("Null Object")
 
         # Write Date Upload
-        worksheet.write_string(0, 10, "Date Upload")
         try:
-            worksheet.write_string(photo_starting_row, 10, datetime.datetime.utcfromtimestamp(float(
+            worksheet.write_string(photo_starting_row, date_upload_column, datetime.datetime.utcfromtimestamp(float(
                 photo.get('dateupload'))).strftime('%Y-%m-%d'))
         except:
             print("Null Object")
 
         # Write Date / Time Taken
-        worksheet.write_string(0, 11, "Date Taken")
-        worksheet.write_string(0, 12, "Time Taken")
         try:
             modified_date_taken = str(photo.get('datetaken')).split()
-            worksheet.write_string(photo_starting_row, 11, modified_date_taken[0])
-            worksheet.write_string(photo_starting_row, 12, modified_date_taken[1])
+            worksheet.write_string(photo_starting_row, date_taken_column, modified_date_taken[0])
+            worksheet.write_string(photo_starting_row, time_taken_column, modified_date_taken[1])
         except:
             print("Null Object")
 
         # Write Icon Server
-        worksheet.write_string(0, 13, "Icon Server")
         try:
-            worksheet.write_number(photo_starting_row, 13, int(photo.get('iconserver')))
+            worksheet.write_number(photo_starting_row, icon_server_column, int(photo.get('iconserver')))
         except:
             print("Null Object")
 
         # Write Last Update
-        worksheet.write_string(0, 14, "Last Update")
         try:
-            worksheet.write_string(photo_starting_row, 14, datetime.datetime.utcfromtimestamp(
+            worksheet.write_string(photo_starting_row, last_update_column, datetime.datetime.utcfromtimestamp(
                 float(photo.get('lastupdate'))).strftime('%Y-%m-%d'))
         except:
             print("Null Object")
 
         # Write link
-        worksheet.write_string(0, 15, "Link")
         try:
             url = 'https://www.flickr.com/photos/' + photo.get('owner') + '/' + photo.get('id')
-            worksheet.write_string(photo_starting_row, 15, url)
+            worksheet.write_string(photo_starting_row, link_column, url)
         except:
             print("Null Object")
 
         # Write Tags
-        worksheet.write_string(0, 16, "Tags")
+
         try:
-            worksheet.write_string(photo_starting_row, 16, photo.get('tags'))
+            worksheet.write_string(photo_starting_row, tags_column, photo.get('tags'))
         except:
             print("Null Object")
 
         # Write Owner Home Town and Real Name
         if search.get_user_info():
 
-            worksheet.write_string(0, 17, "Owner Name")
-            worksheet.write_string(0, 18, "Owner Hometown")
             try:
                 raw_response = flickr.photos.getInfo(photo_id=photo.get('id'), secret=photo.get('secret'))
                 response = raw_response.find('photo').find('owner')
-                worksheet.write_string(photo_starting_row, 17, response.attrib['realname'])
-                worksheet.write_string(photo_starting_row, 18, response.attrib['location'])
+                worksheet.write_string(photo_starting_row, owner_real_name_column, response.attrib['realname'])
+                worksheet.write_string(photo_starting_row, owner_hometown_column, response.attrib['location'])
             except:
                 print("Failed Response")
 
