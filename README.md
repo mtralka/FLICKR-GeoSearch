@@ -6,10 +6,10 @@ Uses the Flickr API to execute geotagged photo searches. Results are auto format
 
     BBOX: Min Lat, Min Long, Max Lat, Max Long
     Radial: Lat, Long, Radius, Units
-    Accuracy
-    Tags
-    Minimum Date Taken
-    Maximum Date Taken
+    Accuracy 
+    Tags 
+    Minimum Date Taken 
+    Maximum Date Taken 
     
 **Returning Variables**
 
@@ -28,16 +28,11 @@ Uses the Flickr API to execute geotagged photo searches. Results are auto format
     Icon Server
     Last Update
     Tags
-    Owner Name (optional, slow)
-    Owner Country (optional, slow)
+    Owner Name (optional, slower)
+    Owner Country (optional, slower)
   
 **Return Options**
     
     XLXS File
     Flickr Photo Album- not all photos are uploadable to a user's album, time intensive due to API restrictions
   
-**Using**
-
-Xlsx Writer, 
-PySimpleGUI, 
-Python Flickr API Kit
