@@ -1,6 +1,9 @@
 # Flickr GeoSearch
 
+
 Uses the Flickr API to execute geotagged photo searches. Results are auto formatted into an excel file and can be uploaded to Flickr photo galleries for review. Also supports the download of photos from Flickr photo galleries.
+
+![GUI](/GUI_Interface.PNG)
 
 **Search Criteria:**
 
