@@ -1,7 +1,7 @@
 # Flickr GeoSearch
 
 
-Flickr GeoSearch is an all-inclusive python application that leverages the Flickr API to execute geospatial photo searches across the entire Flickr photo community. Created with Python 3.0, Flickr GeoSearch is lightweight, portable, and cross-compatible with Windows, macOS, and Linux. Simple to use and distribute, Flickr GeoSearch opens the door for anyone to use and analyze social media big data. Open source friendly and licensed under GNU GPL v3. 
+Flickr GeoSearch is an all-inclusive python application that leverages the Flickr API to execute geospatial photo searches across the entire Flickr photo community. Created with Python 3.0, Flickr GeoSearch is lightweight, portable, and cross-compatible with Windows, macOS, and Linux. Simple to use and distribute, Flickr GeoSearch opens the door for anyone to use and analyze social media big data. Open source friendly and licensed under GNU GPL v3. Reference User Guide for more info
 
 ![GUI](/GUI_Interface.PNG)
 
