@@ -50,7 +50,7 @@ class flickrSearchParameters:
         self.max_year = values['-max_year-']
         self.gallery_upload_boolean = values['-upload_to_gallery_boolean-']
         self.user_info_boolean = values['-user_info_boolean-']
-        self.bbox_grid = '{},{},{},{}'.format(self.min_long, self.min_lat, self.max_long, self.max_lat)
+        self.bbox_grid = '{},{},{},{}'.format(self.min_lat, self.min_long, self.max_lat, self.max_long)
 
     def __del__(self):
         # For good measure
